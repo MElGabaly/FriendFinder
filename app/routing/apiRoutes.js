@@ -32,7 +32,22 @@ module.exports = function(app) {
   app.post("/api/friends", function(req, res) {
     // Note the code here. Our "server" will respond to requests
     // req.body is available since we're using the body parsing middleware
+
+    var userScores = req.body.scores;
+    var allscores = [];
+    for (var y = 0; y < friendsData.length; y++) {
+      var dataScore = friendsData[y].scores;
+      var x = [];
+      for (var i = 0; i <= dataScore.length - 1; i++) {
+        x.push(Math.abs(userScores[i] - dataScore[i]));
+      }
+      var total = x.reduce((a, b) => a + b, 0);
+      allscores.push(total);
+    }
+    const indexOfMinscore = allscores.indexOf(Math.min(...allscores));
+
+    var match = friendsData[indexOfMinscore];
     friendsData.push(req.body);
-    res.json(true);
+    res.send(match);
   });
 };
